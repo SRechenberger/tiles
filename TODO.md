@@ -5,3 +5,5 @@ TODO
   - Split screen
   - Padding
   - Boarders
+
+- Documentation
