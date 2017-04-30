@@ -31,6 +31,13 @@ typedef struct FRAME {
   int fr_scr_y;     // Y-Scroll-Position.
   WINDOW *fr_win;   // The ncurses window, finally displaying the Frame.
   char *fr_image;   // The Image.
+  int  *fr_colour_map;
+                    /* Colour map for the image; dimensions should match those of fr_image
+                     * if this is null, default terminal colours are used.
+                     * The value of each cell is an indexed colour pair, defined by
+                     * init_pair()
+                     * */
+  int  *fr_colour_buffer;
   char *fr_buffer;  // The Buffer of the Frame.
 } Frame;
 
@@ -43,8 +50,11 @@ Frame* mk_frame(
     int fr_buf_height,
     int fr_scr_x,
     int fr_scr_y,
-    char *fr_image);
+    char *fr_image,
+    int  *colour_map);
 
 int draw_frame(Frame *fr);
+
+int scroll_frame(Frame *fr, int x, int y);
 
 #endif

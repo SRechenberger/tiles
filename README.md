@@ -1,7 +1,8 @@
 # tiles
-Wrapper around ncurses, to render a character arrays as tile maps, supporting multiple scrollable frames.
+Wrapper around ncurses windows, to render a character arrays as tile maps, supporting multiple scrollable frames.
 
 ## Example
+### Image
 
     +------------ TILEMAP ----------+
     |                               |
@@ -17,7 +18,7 @@ Wrapper around ncurses, to render a character arrays as tile maps, supporting mu
     |                               |
     +-------------------------------+
 
-## Result
+### Result
 
       +---- FRAME 1 ----+
       | 1               |
@@ -34,3 +35,5 @@ Wrapper around ncurses, to render a character arrays as tile maps, supporting mu
       |            3|
       +-------------+
 
+## Current Version
+0.0.1
