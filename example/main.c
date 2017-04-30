@@ -1,4 +1,4 @@
-#include "frame.h"
+#include "../src/frame.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -16,6 +16,8 @@ int main(){
   int p_x = 1,
       p_y = 1;
 
+  char borders[8] = "||--++++";
+  char b[] = "BOX";
 
   initscr();
   start_color();
@@ -31,12 +33,12 @@ int main(){
   noecho();
   cbreak();
   refresh();
-  Frame *f = mk_frame(0, 0, 100, 100, 10, 10, 0, 0, img, NULL);
+  Frame *f = mk_frame(0, 0, 100, 100, 40, 40, 0, 0, 1, 1, img, colours, "BOX");
   if(!f){
     fprintf(stderr, "ERROR: f == null\n");
     exit(1);
   }
-  Frame *f1 = mk_frame(7, 7, 100, 100, 10, 10, 0, 0, img, colours);
+  Frame *f1 = mk_frame(40, 0, 100, 100, 10, 10, 0, 0, 1, 1, img, colours, "BOX");
   if(!f){
     fprintf(stderr, "ERROR: f == null\n");
     exit(1);
@@ -50,16 +52,16 @@ int main(){
     COLOURS(p_x,p_y) = 1;
     switch(in){
       case 'i':
-        mvprintw(30,30,"%d",scroll_frame(f,0,-1));
+        scroll_frame(f1,0,-1);
         break;
       case 'k':
-        mvprintw(30,30,"%d",scroll_frame(f,0,1));
+        scroll_frame(f1,0,1);
         break;
       case 'j':
-        mvprintw(30,30,"%d",scroll_frame(f,-1,0));
+        scroll_frame(f1,-1,0);
         break;
       case 'l':
-        mvprintw(30,30,"%d",scroll_frame(f,1,0));
+        scroll_frame(f1,1,0);
         break;
       case 'w':
         p_y--;

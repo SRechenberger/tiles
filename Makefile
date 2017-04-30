@@ -1,8 +1,8 @@
-test: main.o frame.o
-	gcc -Wall -o test main.o frame.o -lncurses
+example/test: example/main.o build/frame.o
+	gcc -Wall -o example/test example/main.o build/frame.o -lncurses
 
-main.o: main.c frame.h
-	gcc -Wall -std=gnu11 -c -o main.o main.c
+example/main.o: example/main.c src/frame.h
+	gcc -Wall -std=gnu11 -c -o example/main.o example/main.c
 
-frame.o: frame.c frame.h
-	gcc -Wall -std=gnu11 -c -o frame.o frame.c
+build/frame.o: src/frame.c src/frame.h
+	gcc -Wall -std=gnu11 -c -o build/frame.o src/frame.c

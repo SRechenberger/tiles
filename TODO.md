@@ -3,7 +3,7 @@ TODO
 
 - Layout
   - Split screen
-  - Padding
-  - Boarders
+  + Padding
+  + Boarders
 
 - Documentation

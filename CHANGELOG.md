@@ -1,3 +1,13 @@
+VERSION 0.0.2
+=============
+
+WORKING FEATURES
+----------------
+
+- Configuration of frame borders.
+- Configuration of frame padding.
+
+
 VERSION 0.0.1
 =============
 

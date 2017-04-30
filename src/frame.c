@@ -1,4 +1,5 @@
 #include "frame.h"
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ncurses.h>
@@ -10,7 +11,8 @@ Frame* mk_frame(
     int fr_width, int fr_height,
     int fr_buf_width, int fr_buf_height,
     int fr_scr_x, int fr_scr_y,
-    char *fr_image, int *fr_colour_map){
+    int fr_pad_v, int fr_pad_h,
+    char *fr_image, int *fr_colour_map, char *fr_borders){
 
 
   Frame *fr = malloc(sizeof(Frame));
@@ -38,10 +40,12 @@ Frame* mk_frame(
     fr_pos_y,
     fr_width,
     fr_height,
-    fr_buf_width,
-    fr_buf_height,
+    fr_buf_width-2*fr_pad_v,
+    fr_buf_height-2*fr_pad_h,
     fr_scr_x,
     fr_scr_y,
+    fr_pad_v,
+    fr_pad_h,
     0};
 
   fr -> fr_colour_map = fr_colour_map;
@@ -49,6 +53,7 @@ Frame* mk_frame(
   fr -> fr_image = fr_image;
   fr -> fr_win = win;
   fr -> fr_buffer = buffer;
+  fr -> fr_borders = fr_borders;
 
   return fr;
 }
@@ -84,12 +89,22 @@ int draw_frame(Frame *fr){
   int ls = fr->fr_buf_height,
       cs = fr->fr_buf_width;
   int *cb = fr->fr_colour_buffer;
-  char *buf = fr->fr_buffer;
+  char *buf = fr->fr_buffer,
+       *brds = fr->fr_borders;
   for(int l = 0; l < ls; l++){
     for(int c = 0; c < cs; c++){
       if(cb) wattron(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
-      mvwprintw(fr->fr_win, l, c, "%c", buf[cs*l+c]);
+      mvwprintw(fr->fr_win, l+fr->fr_pad_h, c+fr->fr_pad_v, "%c", buf[cs*l+c]);
       if(cb) wattroff(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
+    }
+  }
+  if(brds){
+    if(!strcmp(brds,"BOX")){
+      box(fr->fr_win, 0, 0);
+    } else {
+      wborder(fr->fr_win,
+          brds[0], brds[1], brds[2], brds[3],
+          brds[4], brds[5], brds[6], brds[7]);
     }
   }
   wrefresh(fr->fr_win);

@@ -29,6 +29,12 @@ typedef struct FRAME {
   int fr_buf_height;// Height of the Frame.
   int fr_scr_x;     // X-Scroll-Position.
   int fr_scr_y;     // Y-Scroll-Position.
+  int fr_pad_v;     // Vertical padding.
+  int fr_pad_h;     // Horizontal padding.
+  char *fr_borders; /* Borders of the Frame; should point to an array of 8 chars:
+                     * [T,B,L,R,TL,TR,BL,BR]
+                     * Keep in mind, that a border covers part of the frame.
+                     * */
   WINDOW *fr_win;   // The ncurses window, finally displaying the Frame.
   char *fr_image;   // The Image.
   int  *fr_colour_map;
@@ -50,8 +56,11 @@ Frame* mk_frame(
     int fr_buf_height,
     int fr_scr_x,
     int fr_scr_y,
+    int fr_pad_v,
+    int fr_pad_h,
     char *fr_image,
-    int  *colour_map);
+    int  *colour_map,
+    char *fr_borders);
 
 int draw_frame(Frame *fr);
 

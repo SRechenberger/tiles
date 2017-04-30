@@ -36,4 +36,4 @@ Wrapper around ncurses windows, to render a character arrays as tile maps, suppo
       +-------------+
 
 ## Current Version
-0.0.1
+0.0.2
