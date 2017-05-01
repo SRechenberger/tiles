@@ -8,6 +8,10 @@ OBJECT_FILES=*.o
 libtiles.so.0.0.2: frame.o
 	gcc -shared -Wl,-soname,libtiles.so.0 -o libtiles.so.0.0.2 $(OBJECT_FILES)
 
+libtiles.a: frame.o
+	ar rc libtiles.a frame.o
+	ranlib libtiles.a
+
 frame.o: src/frame.c src/frame.h
 	gcc -Wall -std=gnu11 -c -fPIC -o frame.o src/frame.c
 

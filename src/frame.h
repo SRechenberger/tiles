@@ -66,4 +66,6 @@ int draw_frame(Frame *fr);
 
 int scroll_frame(Frame *fr, int x, int y);
 
+int free_frame(Frame *fr);
+
 #endif

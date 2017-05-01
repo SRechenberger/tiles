@@ -6,6 +6,7 @@ WORKING FEATURES
 
 - Configuration of frame borders.
 - Configuration of frame padding.
+- Freeing frames.
 
 
 VERSION 0.0.1

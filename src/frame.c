@@ -129,3 +129,12 @@ int scroll_frame(Frame *fr, int x, int y){
   fr->fr_scr_y = new_y;
   return 1;
 }
+
+int free_frame(Frame *fr){
+  int d = delwin(fr->fr_win);
+  free(fr->fr_colour_buffer);
+  free(fr->fr_buffer);
+  free(fr);
+  return d != ERR;
+}
+

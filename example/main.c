@@ -1,4 +1,4 @@
-#include <libtiles/frame.h>
+#include "../src/frame.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -85,6 +85,9 @@ int main(){
   } while((in = getch()) != 'q');
 
 
+  mvprintw(0,0,"F %s\n", free_frame(f) ? "FREED" : "NOT FREED");
+  mvprintw(1,0,"F1 %s\n", free_frame(f1) ? "FREED" : "NOT FREED");
+  getch();
   endwin();
 
   return 0;
