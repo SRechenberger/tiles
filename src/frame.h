@@ -68,4 +68,6 @@ int scroll_frame(Frame *fr, int x, int y);
 
 int free_frame(Frame *fr);
 
+Frame *splitv_frame(Frame *fr);
+
 #endif

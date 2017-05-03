@@ -7,6 +7,7 @@ WORKING FEATURES
 - Configuration of frame borders.
 - Configuration of frame padding.
 - Freeing frames.
+- Splitting frames vertically in half (does not quite work with padding).
 
 
 VERSION 0.0.1

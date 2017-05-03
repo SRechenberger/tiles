@@ -40,8 +40,8 @@ Frame* mk_frame(
     fr_pos_y,
     fr_width,
     fr_height,
-    fr_buf_width-2*fr_pad_v,
-    fr_buf_height-2*fr_pad_h,
+    fr_buf_width,
+    fr_buf_height,
     fr_scr_x,
     fr_scr_y,
     fr_pad_v,
@@ -67,12 +67,14 @@ int update_buffer(Frame *fr){
       scr_x = fr->fr_scr_x,
       scr_y = fr->fr_scr_y,
       *cm = fr->fr_colour_map,
-      *cb = fr->fr_colour_buffer;
+      *cb = fr->fr_colour_buffer,
+      pad_h = fr->fr_pad_h,
+      pad_v = fr->fr_pad_v;
   char *buf = fr->fr_buffer,
        *img = fr->fr_image;
 
-  for(int r = 0; r < buf_h; r++){
-    for(int c = 0; c < buf_w; c++){
+  for(int r = pad_h; r < buf_h-pad_h; r++){
+    for(int c = pad_v; c < buf_w-pad_v; c++){
       // "real" coords
       int rr = scr_y+r,
           rc = scr_x+c;
@@ -87,7 +89,9 @@ int update_buffer(Frame *fr){
 int draw_frame(Frame *fr){
   if(!update_buffer(fr)) return 0;
   int ls = fr->fr_buf_height,
-      cs = fr->fr_buf_width;
+      cs = fr->fr_buf_width,
+      pad_h = fr->fr_pad_h,
+      pad_v = fr->fr_pad_v;
   int *cb = fr->fr_colour_buffer;
   char *buf = fr->fr_buffer,
        *brds = fr->fr_borders;
@@ -136,5 +140,33 @@ int free_frame(Frame *fr){
   free(fr->fr_buffer);
   free(fr);
   return d != ERR;
+}
+
+Frame *splitv_frame(Frame *fr){
+  int w = fr->fr_buf_width;
+  if(w < 2) return 0; // One of the resulting frames would have width < 0
+  int wnew2 = w / 2,
+      wnew1 = w - wnew2;
+  fr->fr_buf_width = wnew1;
+  wclear(fr->fr_win);
+  wrefresh(fr->fr_win);
+  if(wresize(fr->fr_win, fr->fr_buf_height, wnew1) == ERR){
+    return 0;
+  }
+  Frame *right = mk_frame(
+      fr->fr_pos_x+wnew1,
+      fr->fr_pos_y,
+      fr->fr_width,
+      fr->fr_height,
+      wnew2,
+      fr->fr_buf_height,
+      fr->fr_scr_x,
+      fr->fr_scr_y,
+      fr->fr_pad_v,
+      fr->fr_pad_h,
+      fr->fr_image,
+      fr->fr_colour_map,
+      fr->fr_borders);
+  return right;
 }
 
