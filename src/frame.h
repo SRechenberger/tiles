@@ -2,6 +2,8 @@
 #define __FRAME_H__
 
 #include <ncurses.h>
+#define PERCENT 1
+#define TILES 2
 
 /*******
  *
@@ -68,6 +70,7 @@ int scroll_frame(Frame *fr, int x, int y);
 
 int free_frame(Frame *fr);
 
-Frame *splitv_frame(Frame *fr);
+Frame *splitv_frame(Frame *fr, int size, int unit);
+Frame *splith_frame(Frame *fr, int size, int unit);
 
 #endif

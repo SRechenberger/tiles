@@ -95,10 +95,10 @@ int draw_frame(Frame *fr){
   int *cb = fr->fr_colour_buffer;
   char *buf = fr->fr_buffer,
        *brds = fr->fr_borders;
-  for(int l = 0; l < ls; l++){
-    for(int c = 0; c < cs; c++){
+  for(int l = pad_h; l < ls-pad_h; l++){
+    for(int c = pad_v; c < cs-pad_v; c++){
       if(cb) wattron(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
-      mvwprintw(fr->fr_win, l+fr->fr_pad_h, c+fr->fr_pad_v, "%c", buf[cs*l+c]);
+      mvwprintw(fr->fr_win, l, c, "%c", buf[cs*l+c]);
       if(cb) wattroff(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
     }
   }
@@ -142,11 +142,24 @@ int free_frame(Frame *fr){
   return d != ERR;
 }
 
-Frame *splitv_frame(Frame *fr){
+Frame *splitv_frame(Frame *fr, int size, int unit){
   int w = fr->fr_buf_width;
+  if(w <= size && unit == TILES) return 0;
   if(w < 2) return 0; // One of the resulting frames would have width < 0
-  int wnew2 = w / 2,
-      wnew1 = w - wnew2;
+  int wnew1;
+  switch(unit){
+    case PERCENT:
+      wnew1 = (w*size) / 100;
+      break;
+    case TILES:
+      wnew1 = size;
+      break;
+    default:
+      return 0;
+      break;
+  }
+  int wnew2 = w - wnew1;
+  if(wnew2 <= 0) return 0;
   fr->fr_buf_width = wnew1;
   wclear(fr->fr_win);
   wrefresh(fr->fr_win);
@@ -160,6 +173,47 @@ Frame *splitv_frame(Frame *fr){
       fr->fr_height,
       wnew2,
       fr->fr_buf_height,
+      fr->fr_scr_x,
+      fr->fr_scr_y,
+      fr->fr_pad_v,
+      fr->fr_pad_h,
+      fr->fr_image,
+      fr->fr_colour_map,
+      fr->fr_borders);
+  return right;
+}
+
+Frame *splith_frame(Frame *fr, int size, int unit){
+  int h = fr->fr_buf_height;
+  if(h <= size && unit == TILES) return 0;
+  if(h < 2) return 0; // One of the resulting frames would have width < 0
+  int hnew1;
+  switch(unit){
+    case PERCENT:
+      hnew1 = (h*size) / 100;
+      break;
+    case TILES:
+      hnew1 = size;
+      break;
+    default:
+      return 0;
+      break;
+  }
+  int hnew2 = h - hnew1;
+  if(hnew2 <= 0) return 0;
+  fr->fr_buf_height = hnew1;
+  wclear(fr->fr_win);
+  wrefresh(fr->fr_win);
+  if(wresize(fr->fr_win, hnew2, fr->fr_buf_width) == ERR){
+    return 0;
+  }
+  Frame *right = mk_frame(
+      fr->fr_pos_x,
+      fr->fr_pos_y+hnew1,
+      fr->fr_width,
+      fr->fr_height,
+      fr->fr_buf_width,
+      hnew2,
       fr->fr_scr_x,
       fr->fr_scr_y,
       fr->fr_pad_v,

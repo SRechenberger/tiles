@@ -11,7 +11,7 @@ int main(){
   int colours[width*height];
 #define COLOURS(x,y) (colours[y*width+x])
 
-  Frame *frames[10];
+  Frame *frames[100];
   int fcnt = 0;
 
 
@@ -35,7 +35,7 @@ int main(){
   noecho();
   cbreak();
   refresh();
-  Frame *f = mk_frame(0, 0, 100, 100, 80, 40, 0, 0, 0, 0, img, colours, "BOX");
+  Frame *f = mk_frame(0, 0, 100, 100, 80, 40, 0, 0, 3, 3, img, colours, borders);
   if(!f){
     fprintf(stderr, "ERROR: f == null\n");
     exit(1);
@@ -47,6 +47,7 @@ int main(){
   do{
     IMG(p_x,p_y) = '"';
     COLOURS(p_x,p_y) = 1;
+    Frame *new;
     switch(in){
       case 'i':
         scroll_frame(f,0,-1);
@@ -73,7 +74,16 @@ int main(){
         p_x++;
         break;
       case 'v':
-        frames[fcnt++] = splitv_frame(f);
+        new = splitv_frame(f, 60, PERCENT);
+        if(new){
+          frames[fcnt++] = new;
+        }
+        break;
+      case 'h':
+        new = splith_frame(f, 10, TILES);
+        if(new){
+          frames[fcnt++] = new;
+        }
         break;
       default:
         break;
@@ -87,8 +97,10 @@ int main(){
   } while((in = getch()) != 'q');
 
 
-  mvprintw(0,0,"F %s\n", free_frame(f) ? "FREED" : "NOT FREED");
-  getch();
+  free_frame(f);
+  for(int i = 0; i < fcnt; i++){
+    free_frame(frames[i]);
+  }
   endwin();
 
   return 0;
