@@ -1,21 +1,19 @@
-VERSION 0.0.3
-=============
+# CHANGELOG
 
-WORKING FEATURES
-----------------
+## VERSION 0.0.3
+
+### WORKING FEATURES
 
 - Support for multiple foreground layers.
 
-CHANGES
--------
+### CHANGES
+
 - Somewhat more efficient drawing mechanism.
 
 
-VERSION 0.0.2
-=============
+## VERSION 0.0.2
 
-WORKING FEATURES
-----------------
+### WORKING FEATURES
 
 - Configuration of frame borders.
 - Configuration of frame padding.
@@ -23,11 +21,9 @@ WORKING FEATURES
 - Splitting frames vertically and horizontally.
 
 
-VERSION 0.0.1
-=============
+## VERSION 0.0.1
 
-WORKING FEATURES
-----------------
+### WORKING FEATURES
 
 - Rendering of an image through multiple frames.
 - Rendering of colours; even seperately for every frame.
