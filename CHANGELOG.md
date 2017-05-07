@@ -5,6 +5,7 @@
 ### WORKING FEATURES
 
 - Support for multiple foreground layers.
+  (All layers still share one colour map; will be changed soon)
 
 ### CHANGES
 
