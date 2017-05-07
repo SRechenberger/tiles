@@ -2,7 +2,7 @@ TODO
 ----
 
 - Multiple Layers
-  - Background
-  - One or multiple foreground layers
+  - One colour map for each layer
 
 - Documentation
+  - Wiki
