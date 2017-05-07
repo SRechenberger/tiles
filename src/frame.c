@@ -12,7 +12,8 @@ Frame* mk_frame(
     int fr_buf_width, int fr_buf_height,
     int fr_scr_x, int fr_scr_y,
     int fr_pad_v, int fr_pad_h,
-    char *fr_image, int *fr_colour_map, char *fr_borders){
+    int fr_fg_layers, char **fr_foreground,
+    char *fr_background, int *fr_colour_map, char *fr_borders){
 
 
   Frame *fr = malloc(sizeof(Frame));
@@ -50,16 +51,18 @@ Frame* mk_frame(
 
   fr -> fr_colour_map = fr_colour_map;
   fr -> fr_colour_buffer = colour_buffer;
-  fr -> fr_image = fr_image;
+  fr -> fr_background = fr_background;
   fr -> fr_win = win;
   fr -> fr_buffer = buffer;
   fr -> fr_borders = fr_borders;
+  fr -> fr_fg_layers = fr_fg_layers;
+  fr -> fr_foreground = fr_foreground;
 
   return fr;
 }
 
 // Update the visible buffer.
-int update_buffer(Frame *fr){
+int update_buffer(Frame *fr, bool *diff){
   if(!fr) return 0;
   int buf_w = fr->fr_buf_width,
       buf_h = fr->fr_buf_height,
@@ -70,24 +73,45 @@ int update_buffer(Frame *fr){
       *cb = fr->fr_colour_buffer,
       pad_h = fr->fr_pad_h,
       pad_v = fr->fr_pad_v;
-  char *buf = fr->fr_buffer,
-       *img = fr->fr_image;
 
+  char *buf = fr->fr_buffer;
+  int cnt = 0;
   for(int r = pad_h; r < buf_h-pad_h; r++){
     for(int c = pad_v; c < buf_w-pad_v; c++){
       // "real" coords
       int rr = scr_y+r,
-          rc = scr_x+c;
-      buf[r*buf_w+c] = img[rr*img_w+rc];
+          rc = scr_x+c,
+          layer = fr->fr_fg_layers-1;
+
+      while(layer >= 0){
+        if(fr->fr_foreground[layer][rr*img_w+rc]) break;
+        layer--;
+      }
+
+      char *img = layer >= 0
+        ? fr->fr_foreground[layer]
+        : fr->fr_background;
+
+      if(buf[r*buf_w+c] != img[rr*img_w+rc]){
+        diff[r*buf_w+c] = true;
+        buf[r*buf_w+c] = img[rr*img_w+rc];
+        cnt++;
+      } else {
+        diff[r*buf_w+c] = false;
+      }
       if(cm) cb[r*buf_w+c] = cm[rr*img_w+rc];
     }
   }
-  return 1;
+  return cnt;
 }
 
 // Draw the visible buffer in the window.
 int draw_frame(Frame *fr){
-  if(!update_buffer(fr)) return 0;
+  int size = fr->fr_buf_height*fr->fr_buf_width,
+      changes;
+  bool diff[fr->fr_buf_height*fr->fr_buf_width];
+
+  if(0 > (changes = update_buffer(fr, diff))) return 0;
   int ls = fr->fr_buf_height,
       cs = fr->fr_buf_width,
       pad_h = fr->fr_pad_h,
@@ -96,10 +120,21 @@ int draw_frame(Frame *fr){
   char *buf = fr->fr_buffer,
        *brds = fr->fr_borders;
   for(int l = pad_h; l < ls-pad_h; l++){
-    for(int c = pad_v; c < cs-pad_v; c++){
-      if(cb) wattron(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
-      mvwprintw(fr->fr_win, l, c, "%c", buf[cs*l+c]);
-      if(cb) wattroff(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
+    /* If more than half of the visible area has changed
+     * and no colours are used,
+     * then print linewise to the window;
+     * otherwise print only those chararcters changed.
+     */
+    if(changes > size / 2 && !cb){
+      mvwprintw(fr->fr_win, l, pad_v, "%.*s", cs-2*pad_v, buf+cs*l+pad_v);
+    } else {
+      for(int c = pad_v; c < cs-pad_v; c++){
+        if(diff[cs*l+c]){
+          if(cb) wattron(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
+          mvwprintw(fr->fr_win, l, c, "%c", buf[cs*l+c]);
+          if(cb) wattroff(fr->fr_win, COLOR_PAIR(cb[cs*l+c]));
+        }
+      }
     }
   }
   if(brds){
@@ -177,7 +212,9 @@ Frame *splitv_frame(Frame *fr, int size, int unit){
       fr->fr_scr_y,
       fr->fr_pad_v,
       fr->fr_pad_h,
-      fr->fr_image,
+      fr->fr_fg_layers,
+      fr->fr_foreground,
+      fr->fr_background,
       fr->fr_colour_map,
       fr->fr_borders);
   return right;
@@ -218,7 +255,9 @@ Frame *splith_frame(Frame *fr, int size, int unit){
       fr->fr_scr_y,
       fr->fr_pad_v,
       fr->fr_pad_h,
-      fr->fr_image,
+      fr->fr_fg_layers,
+      fr->fr_foreground,
+      fr->fr_background,
       fr->fr_colour_map,
       fr->fr_borders);
   return right;

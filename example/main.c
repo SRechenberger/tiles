@@ -4,9 +4,13 @@
 #include <time.h>
 
 int main(){
+  srand(time(NULL));
   int width = 100,
       height = 100;
-  char img[100*100];
+  char img[100*100],
+       fg[100*100];
+  char *fgs[1] = {fg};
+#define FG(x,y) (fg[y*width+x])
 #define IMG(x,y) (img[y*width+x])
   int colours[width*height];
 #define COLOURS(x,y) (colours[y*width+x])
@@ -18,8 +22,9 @@ int main(){
   int p_x = 1,
       p_y = 1;
 
-  char borders[8] = "||--++++";
+  char borders[8] = "BOX";
   char b[] = "BOX";
+  char tiles[8] = "+*~\".:,;";
 
   initscr();
   start_color();
@@ -29,13 +34,14 @@ int main(){
   for(int i = 0; i < 100; i++){
     for(int j = 0; j < 100; j++){
       img[i*100+j] = '"';
+      FG(j,i) = 0;
       COLOURS(j,i) = 1;
     }
   }
   noecho();
   cbreak();
   refresh();
-  Frame *f = mk_frame(0, 0, 100, 100, 80, 40, 0, 0, 3, 3, img, colours, borders);
+  Frame *f = mk_frame(0, 0, 100, 100, 80, 40, 0, 0, 1, 1, 1, fgs, img, colours, borders);
   if(!f){
     fprintf(stderr, "ERROR: f == null\n");
     exit(1);
@@ -45,7 +51,7 @@ int main(){
 
   int in = 0;
   do{
-    IMG(p_x,p_y) = '"';
+    FG(p_x,p_y) = 0;
     COLOURS(p_x,p_y) = 1;
     Frame *new;
     switch(in){
@@ -85,10 +91,17 @@ int main(){
           frames[fcnt++] = new;
         }
         break;
+      case 'r':
+        for(int i = 0; i < 100; i++){
+          for(int j = 0; j < 100; j++){
+            IMG(j,i) = tiles[rand()%8];
+          }
+        }
+        break;
       default:
         break;
     }
-    IMG(p_x,p_y) = '@';
+    FG(p_x,p_y) = '@';
     COLOURS(p_x,p_y) = 2;
     draw_frame(f);
     for(int i = 0; i < fcnt; i++){

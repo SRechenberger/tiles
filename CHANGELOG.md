@@ -1,3 +1,16 @@
+VERSION 0.0.3
+=============
+
+WORKING FEATURES
+----------------
+
+- Support for multiple foreground layers.
+
+CHANGES
+-------
+- Somewhat more efficient drawing mechanism.
+
+
 VERSION 0.0.2
 =============
 

@@ -38,7 +38,11 @@ typedef struct FRAME {
                      * Keep in mind, that a border covers part of the frame.
                      * */
   WINDOW *fr_win;   // The ncurses window, finally displaying the Frame.
-  char *fr_image;   // The Image.
+  int fr_fg_layers; // Number of foreground layers.
+  char **fr_foreground;
+                    // Multiple foreground layers.
+  char *fr_background;
+                    // The background mage.
   int  *fr_colour_map;
                     /* Colour map for the image; dimensions should match those of fr_image
                      * if this is null, default terminal colours are used.
@@ -60,6 +64,8 @@ Frame* mk_frame(
     int fr_scr_y,
     int fr_pad_v,
     int fr_pad_h,
+    int fr_fg_layers,
+    char **fr_foreground,
     char *fr_image,
     int  *colour_map,
     char *fr_borders);
