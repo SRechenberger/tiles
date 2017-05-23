@@ -10,6 +10,7 @@
 ### CHANGES
 
 - Somewhat more efficient drawing mechanism.
+- New example: mapgen
 
 
 ## VERSION 0.0.2

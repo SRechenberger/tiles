@@ -1,4 +1,4 @@
-#include "../src/frame.h"
+#include "../../src/frame.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>

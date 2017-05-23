@@ -34,3 +34,6 @@
 
 # Special Executables
 test
+mapgen
+
+*.swp
